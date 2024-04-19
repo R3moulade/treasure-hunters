@@ -23,7 +23,7 @@ public class TreasurePoint : MonoBehaviour
             {
                 gameManager.AddScore(treasureType);
             }
-
+            Destroy(gameObject);
         }
 
     }
