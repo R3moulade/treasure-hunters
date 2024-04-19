@@ -1,9 +1,11 @@
 using UnityEngine;
 
+// NOT used
 public class TreasurePoint : MonoBehaviour
 {
 
     public TreasureEnum.Treasure treasureType = TreasureEnum.Treasure.Diamond;
+
 
     private GameManager gameManager;
 
@@ -12,20 +14,10 @@ public class TreasurePoint : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
     }
 
-
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other);
-
-        if (other.CompareTag("Player"))
-
-        {
-            if (gameManager != null)
-            {
-                gameManager.AddScore(treasureType);
-            }
-            
-        }
-
+        gameManager.AddScore(treasureType);
+        Destroy(gameObject);
+        Debug.Log("triggered");
     }
 }
