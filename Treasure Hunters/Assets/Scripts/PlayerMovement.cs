@@ -45,9 +45,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateDirectionIndicator() {
         if (directionIndicator != null) {
-            Vector3 direction = (mouseStartPos - Camera.main.ScreenToWorldPoint(Input.mousePosition)).normalized;
-            directionIndicator.position = transform.position + direction * 5; 
-            directionIndicator.rotation = Quaternion.LookRotation(Vector3.forward, direction);
+            // Calculate the current mouse position in world space
+            Vector3 currentMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            currentMousePos.z = 0;
+
+            // Calculate the direction and distance
+            Vector3 direction = mouseStartPos - currentMousePos;
+            float distance = direction.magnitude;
+
+            // Set the start and end points for the line renderer
+            LineRenderer lr = directionIndicator.GetComponent<LineRenderer>();
+            lr.positionCount = 2;
+            lr.SetPosition(0, transform.position); // Start at the player's position
+            lr.SetPosition(1, transform.position + direction.normalized * distance); // End point based on drag distance
+
+            // Optionally, adjust the line width or color based on the distance
+            lr.startWidth = 1f;
+            lr.endWidth = 1f; // Or make the end width larger to indicate direction
         }
     }
+
 }
