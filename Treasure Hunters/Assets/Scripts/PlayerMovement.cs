@@ -12,7 +12,13 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 mouseEndPos;
     private bool isDragging = false;
 
-
+    void Start() {
+        LineRenderer lr = directionIndicator.GetComponent<LineRenderer>();
+        if (lr != null) {
+            lr.startWidth = 0.1f;  // Constant width at the start of the line
+            lr.endWidth = 0.1f;    // Constant width at the end of the line
+        }
+    }
 
     // Update is called once per frame
     void Update() {
@@ -40,29 +46,39 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyForce() {
         float power = Mathf.Min(maxPower, Vector3.Distance(mouseStartPos, mouseEndPos) * 0.5f); 
         Vector2 forceDirection = (mouseStartPos - mouseEndPos).normalized; 
-        rb.AddForce(forceDirection * power, ForceMode2D.Impulse); 
+        rb.AddForce(forceDirection * power, ForceMode2D.Impulse);
+
+        // Make the direction line disappear
+        LineRenderer lr = directionIndicator.GetComponent<LineRenderer>();
+        if (lr != null) {
+            lr.positionCount = 0;
+        }
     }
 
     private void UpdateDirectionIndicator() {
         if (directionIndicator != null) {
-            // Calculate the current mouse position in world space
+            directionIndicator.position = transform.position; // Keep the indicator at the player's position
+
             Vector3 currentMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             currentMousePos.z = 0;
 
-            // Calculate the direction and distance
-            Vector3 direction = mouseStartPos - currentMousePos;
-            float distance = direction.magnitude;
+            // This represents the direction from the drag start to the current mouse position
+            Vector3 dragDirection = mouseStartPos - currentMousePos;
 
-            // Set the start and end points for the line renderer
+            // This will be the direction the ball actually moves, which is the reverse of the drag
+            Vector3 forceDirection = -dragDirection.normalized;
+            float distance = dragDirection.magnitude;
+
             LineRenderer lr = directionIndicator.GetComponent<LineRenderer>();
-            lr.positionCount = 2;
-            lr.SetPosition(0, transform.position); // Start at the player's position
-            lr.SetPosition(1, transform.position + direction.normalized * distance); // End point based on drag distance
-
-            // Optionally, adjust the line width or color based on the distance
-            lr.startWidth = 1f;
-            lr.endWidth = 1f; // Or make the end width larger to indicate direction
+            if (lr != null) {
+                lr.positionCount = 2;
+                // Here we reverse the direction to indicate the actual force direction
+                lr.SetPosition(0, Vector3.zero); // Start at the GameObject's local position, which is now the player's position
+                lr.SetPosition(1, forceDirection * distance); // Set the line in the opposite direction of the drag
+            }
         }
     }
+
+
 
 }
