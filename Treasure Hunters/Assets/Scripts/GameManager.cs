@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+// using System.Diagnostics;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -67,9 +67,20 @@ public class GameManager : MonoBehaviour
     /// Adds the scoreToAdd to the current score
     /// </summary>
     /// <param name="scoreToAdd"></param>
-    public void AddScore(int scoreToAdd)
-    {
-        score += scoreToAdd;
+    public void AddScore(Enum treasureType)
+    {   
+        Debug.Log(treasureType);
+        switch(treasureType)
+        {
+            case TreasureEnum.Treasure.Coin:
+            score += 1;
+            break;
+            case TreasureEnum.Treasure.Diamond:
+            score += 3;
+            break;
+            default:
+            break;
+        }
     }
 
     /// <summary>
