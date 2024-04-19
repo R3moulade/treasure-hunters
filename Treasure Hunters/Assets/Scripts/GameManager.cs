@@ -6,10 +6,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
-    public int score = 0;
-    public GameObject[] playersInScene;
+    public int numberOfPlayers = PlayerPrefs.GetInt("numberOfPlayers");
     private Dictionary<GameObject, int> playerScores = new Dictionary<GameObject, int>();
-    public int playerCount = 0;
 
     private void Awake()
     {
@@ -27,12 +25,14 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // set the score to 0
-        score = 0;
+        // instantiate the players based on the number of players
+        for (int i = 0; i < numberOfPlayers; i++)
+        {
+            // instantiate the player
+            GameObject player = Instantiate(Resources.Load("Player"), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+        }
 
-        //get all players in the scene
-        playersInScene = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in playersInScene)
+        foreach (GameObject player in numberOfPlayers )
         {
             playerScores[player] = 0;
             Debug.Log(player);
@@ -64,12 +64,22 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Adds the scoreToAdd to the current score
+    /// Adds the score to the player based on the treasure type
     /// </summary>
     /// <param name="scoreToAdd"></param>
-    public void AddScore(int scoreToAdd)
+    public void AddScore(Enum treasureType)
     {
-        score += scoreToAdd;
+        switch(treasureType)
+        {
+            case TreasureEnum.Treasure.Coin:
+                score += 1;
+                break;
+            case TreasureEnum.Treasure.Diamond:
+                score += 3;
+                break;
+            default:
+                break;
+        }
     }
 
     /// <summary>
