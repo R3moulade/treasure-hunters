@@ -12,6 +12,7 @@ public class TreasurePoint : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
     }
 
+
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log(other);
@@ -23,7 +24,7 @@ public class TreasurePoint : MonoBehaviour
             {
                 gameManager.AddScore(treasureType);
             }
-
+            
         }
 
     }
