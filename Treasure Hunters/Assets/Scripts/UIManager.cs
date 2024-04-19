@@ -15,9 +15,9 @@ public class UIManager : MonoBehaviour
             if (PlayerPrefs.HasKey("WhichPlayerWon"))
             {
                 // Get the value of WhichPlayerWon key
-                string winningPlayer = PlayerPrefs.GetString("WhichPlayerWon");
+                int winningPlayer = PlayerPrefs.GetInt("WhichPlayerWon");
                 // Set the winning player text
-                SetWinningPlayerText(winningPlayer);
+                SetWinningPlayerText("Player " + winningPlayer);
             }
             else
             {
