@@ -7,9 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
     public int score = 0;
-    public GameObject[] playersInScene;
     private Dictionary<GameObject, int> playerScores = new Dictionary<GameObject, int>();
-    public int playerCount = 0;
+    public int playerCount;
 
     private void Awake()
     {
@@ -22,16 +21,27 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+
+        playerCount = PlayerPrefs.GetInt("playerCount");
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // set the score to 0
-        score = 0;
+        //instansiate the players based on the player count
+        List<GameObject> playersInScene = new List<GameObject>();
+        for (int i = 0; i < playerCount; i++)
+        {
+            GameObject player = Instantiate(Resources.Load<GameObject>("Prefabs/Player"));
+            playersInScene.Add(player);
 
-        //get all players in the scene
-        playersInScene = GameObject.FindGameObjectsWithTag("Player");
+            //add unique ID to each player
+            foreach (GameObject playerInScene in playersInScene)
+            {
+                playerInScene.name = $"Player {i++}";
+            }
+        }
+
         foreach (GameObject player in playersInScene)
         {
             playerScores[player] = 0;
@@ -43,16 +53,23 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GameOver();
-    }
+        //get all players in the scene
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
-    enum GameState
-    {
-        MainMenu,
-        InGame,
-        GameOver
-    }
+        //check if all players are dead
+        if (playerCount == 0)
+        {
+            AllDead();
+        }
 
+        //check if one player is left in the game
+        if (playerCount == 1)
+        {
+            //get the player that is left in the game
+            GameObject winner = players[0];
+            Debug.Log($"The winner is Player {winner.name}");
+        }
+    }
 
     /// <summary>
     /// Returns the current score
@@ -60,6 +77,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public int GetScore()
     {
+        // return the current score based on the player
         return score;
     }
 
@@ -96,13 +114,8 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Checks if all players are dead
     /// </summary>
-    public void GameOver()
+    public void AllDead()
     {
-        // show game over screen
-        if (playersInScene.Length == 0)
-        {
-            Debug.Log("Game Over");
-        }
-
+        Debug.Log("All players are dead");
     }
 }
