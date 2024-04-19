@@ -12,51 +12,61 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 mouseEndPos;
     private bool isDragging = false;
 
-    void Start() {
+    void Start()
+    {
         LineRenderer lr = directionIndicator.GetComponent<LineRenderer>();
-        if (lr != null) {
+        if (lr != null)
+        {
             lr.startWidth = 0.1f;  // Constant width at the start of the line
             lr.endWidth = 0.1f;    // Constant width at the end of the line
         }
     }
 
     // Update is called once per frame
-    void Update() {
-        if (Input.GetMouseButtonDown(0)) {
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
             // When the left mouse button is pressed, record the start position
             mouseStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseStartPos.z = 0; 
+            mouseStartPos.z = 0;
             isDragging = true;
         }
 
-        if (Input.GetMouseButtonUp(0) && isDragging) {
+        if (Input.GetMouseButtonUp(0) && isDragging)
+        {
             // When the mouse button is released, calculate the power and apply force
             mouseEndPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseEndPos.z = 0; 
+            mouseEndPos.z = 0;
             ApplyForce();
             isDragging = false;
         }
 
-        if (isDragging) {
+        if (isDragging)
+        {
             // Optional: Update direction indicator here
             UpdateDirectionIndicator();
         }
     }
 
-    private void ApplyForce() {
-        float power = Mathf.Min(maxPower, Vector3.Distance(mouseStartPos, mouseEndPos) * 0.5f); 
-        Vector2 forceDirection = (mouseStartPos - mouseEndPos).normalized; 
+    private void ApplyForce()
+    {
+        float power = Mathf.Min(maxPower, Vector3.Distance(mouseStartPos, mouseEndPos) * 0.5f);
+        Vector2 forceDirection = (mouseStartPos - mouseEndPos).normalized;
         rb.AddForce(forceDirection * power, ForceMode2D.Impulse);
 
         // Make the direction line disappear
         LineRenderer lr = directionIndicator.GetComponent<LineRenderer>();
-        if (lr != null) {
+        if (lr != null)
+        {
             lr.positionCount = 0;
         }
     }
 
-    private void UpdateDirectionIndicator() {
-        if (directionIndicator != null) {
+    private void UpdateDirectionIndicator()
+    {
+        if (directionIndicator != null)
+        {
             directionIndicator.position = transform.position; // Keep the indicator at the player's position
 
             Vector3 currentMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -70,7 +80,8 @@ public class PlayerMovement : MonoBehaviour
             float distance = dragDirection.magnitude;
 
             LineRenderer lr = directionIndicator.GetComponent<LineRenderer>();
-            if (lr != null) {
+            if (lr != null)
+            {
                 lr.positionCount = 2;
                 // Here we reverse the direction to indicate the actual force direction
                 lr.SetPosition(0, Vector3.zero); // Start at the GameObject's local position, which is now the player's position
@@ -79,6 +90,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
+    void OnTriggerEnter2D(Collider2D coll)
+    {
+        Debug.Log("Trigger: " + coll.gameObject.name);
+    }
 
 }
