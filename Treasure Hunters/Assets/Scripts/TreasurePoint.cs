@@ -22,6 +22,7 @@ public class DiamondPoint : MonoBehaviour
             if (gameManager != null)
             {
                 gameManager.AddScore(treasureType);
+                Destroy(transform.parent.gameObject);
             }
 
         }
