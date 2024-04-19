@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TreasurePoint : MonoBehaviour
+public class DiamondPoint : MonoBehaviour
 {
 
     public TreasureEnum.Treasure treasureType = TreasureEnum.Treasure.Diamond;
