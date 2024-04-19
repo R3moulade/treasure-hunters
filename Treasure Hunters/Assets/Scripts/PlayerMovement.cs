@@ -4,15 +4,50 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Rigidbody2D rb;
+    public float maxPower = 100f;
+    public Transform directionIndicator;
+
+    private Vector3 mouseStartPos;
+    private Vector3 mouseEndPos;
+    private bool isDragging = false;
+
+
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update() {
+        if (Input.GetMouseButtonDown(0)) {
+            // When the left mouse button is pressed, record the start position
+            mouseStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseStartPos.z = 0; // Ensure z-coordinate is zero to stay in 2D plane
+            isDragging = true;
+        }
+
+        if (Input.GetMouseButtonUp(0) && isDragging) {
+            // When the mouse button is released, calculate the power and apply force
+            mouseEndPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseEndPos.z = 0; // Ensure z-coordinate is zero to stay in 2D plane
+            ApplyForce();
+            isDragging = false;
+        }
+
+        if (isDragging) {
+            // Optional: Update direction indicator here
+            UpdateDirectionIndicator();
+        }
+    }
+
+    private void ApplyForce() {
+        float power = Mathf.Min(maxPower, Vector3.Distance(mouseStartPos, mouseEndPos) * 0.5f); // Scale power by distance, with a cap
+        Vector2 forceDirection = (mouseStartPos - mouseEndPos).normalized; // Get the direction of the force
+        rb.AddForce(forceDirection * power, ForceMode2D.Impulse); // Apply the force as an impulse
+    }
+
+    private void UpdateDirectionIndicator() {
+        if (directionIndicator != null) {
+            Vector3 direction = (mouseStartPos - Camera.main.ScreenToWorldPoint(Input.mousePosition)).normalized;
+            directionIndicator.position = transform.position + direction * 5; // Example to place it 5 units away in the direction
+            directionIndicator.rotation = Quaternion.LookRotation(Vector3.forward, direction);
+        }
     }
 }
